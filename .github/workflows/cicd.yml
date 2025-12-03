@@ -61,18 +61,32 @@ jobs:
       env:
           GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
           GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
-      run: |
-         git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest.git
+      # run: |
+      #    git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest.git
          
-         cd Pod8-kubernetes-manifest
+      #    cd Pod8-kubernetes-manifest
 
-         git config --global user.email "pod8cohort4@@gmail.com"
-         git config --global user.name "Pod8-Cohort4"
+      #    git config --global user.email "pod8cohort4@gmail.com"
+      #    git config --global user.name "Pod8-Cohort4"
 
-         sed -i "s+${{ vars.ECR_REPO }}/bank-frontend:.*+${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}+g" ./bank-project/frontend.yaml
+      #    sed -i "s+${{ vars.ECR_REPO }}/bank-frontend:.*+${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}+g" ./bank-project/frontend.yaml
 
-         cat ./bank-project/frontend.yaml | grep -q "${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}"
+      #    cat ./bank-project/frontend.yaml | grep -q "${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}"
 
-         git add ./bank-project/frontend.yaml
-         git commit -m "Update frontend image to version ${{ github.run_number }}"
-         git push origin main
+      #    git add ./bank-project/frontend.yaml
+      #    git commit -m "Update frontend image to version ${{ github.run_number }}"
+      #    git push origin main
+        run: |
+           git clone -b main https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest.git
+           cd Pod8-kubernetes-manifest
+
+           git config --global user.email "pod8cohort4@gmail.com"
+           git config --global user.name "Pod8-Cohort4"
+
+           sed -i "s|$ECR_REPO/bank-frontend:.*|$ECR_REPO/bank-frontend:$GITHUB_RUN_NUMBER|g" ./bank-project/frontend.yaml
+
+           grep -q "$ECR_REPO/bank-frontend:$GITHUB_RUN_NUMBER" ./bank-project/frontend.yaml
+
+           git add ./bank-project/frontend.yaml
+           git commit -m "Update frontend image to version $GITHUB_RUN_NUMBER"
+           git push origin main
