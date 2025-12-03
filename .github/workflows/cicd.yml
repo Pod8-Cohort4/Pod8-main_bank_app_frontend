@@ -71,8 +71,8 @@ jobs:
 
          sed -i "s+${{ vars.ECR_REPO }}/bank-frontend:.*+${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}+g" ./bank-project/frontend.yaml
 
-         cat ./bank-project/frontend.yaml | grep -q "${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}"
+         cat frontend.yaml | grep -q "${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}"
 
-         git add bank-project/frontend.yaml
+         git add frontend.yaml
          git commit -m "Update frontend image to version ${{ github.run_number }}"
          git push origin main
