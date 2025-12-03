@@ -64,7 +64,8 @@ jobs:
       run: |
          git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest.git
          
-         cd Pod8-kubernetes-manifest\bank-project
+         cd Pod8-kubernetes-manifest
+         cd bank-project
          git config --global user.email "pod8cohort4@@gmail.com"
          git config --global user.name "Pod8-Cohort4"
 
