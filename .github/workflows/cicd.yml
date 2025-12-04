@@ -1,4 +1,3 @@
-
 name: Bank Frontend Pipeline
 
 on:
@@ -20,14 +19,12 @@ jobs:
         repository: Pod8-Cohort4/Pod8-main_bank_app_frontend
         ref: main
 
-
     - name: Log in to awscli
       uses: aws-actions/configure-aws-credentials@v3
       with:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-east-1
-
 
     - name: Build container image
       run: docker build -t bank-app-frontend:latest .
@@ -42,7 +39,6 @@ jobs:
     - name: Push image to ECR
       run: docker push ${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}
 
-
     - name: Clean up Docker image locally
       run: |
         docker rmi bank-app-frontend:latest
@@ -51,42 +47,25 @@ jobs:
     - name: Clean up GitHub repo on runner
       run: rm -rf ./*
 
-
-  
   Continues-Update_k8s_manifest:
     runs-on: ubuntu-latest
     needs: Continues-Integration_build_and_push
     steps:
     - name: Checkout repository.
       env:
-          GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
-          GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
-      # run: |
-      #    git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest.git
+        GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
+        GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+      run: |
+        git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest
          
-      #    cd Pod8-kubernetes-manifest
-
-      #    git config --global user.email "pod8cohort4@gmail.com"
-      #    git config --global user.name "Pod8-Cohort4"
-
-      #    sed -i "s+${{ vars.ECR_REPO }}/bank-frontend:.*+${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}+g" ./bank-project/frontend.yaml
-
-      #    cat ./bank-project/frontend.yaml | grep -q "${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}"
-
-      #    git add ./bank-project/frontend.yaml
-      #    git commit -m "Update frontend image to version ${{ github.run_number }}"
-      #    git push origin main
-        run: |
-           git clone -b main https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest.git
-           cd Pod8-kubernetes-manifest
-
-           git config --global user.email "pod8cohort4@gmail.com"
-           git config --global user.name "Pod8-Cohort4"
-
-           sed -i "s|$ECR_REPO/bank-frontend:.*|$ECR_REPO/bank-frontend:$GITHUB_RUN_NUMBER|g" ./bank-project/frontend.yaml
-
-           grep -q "$ECR_REPO/bank-frontend:$GITHUB_RUN_NUMBER" ./bank-project/frontend.yaml
-
-           git add ./bank-project/frontend.yaml
-           git commit -m "Update frontend image to version $GITHUB_RUN_NUMBER"
-           git push origin main
+        cd Pod8-kubernetes-manifest
+        git config --global user.email "osung996@gmail.com"
+        git config --global user.name "pod8"
+  
+        sed -i "s+${{ vars.ECR_REPO }}/bank-frontend:.*+${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}+g" ./bank-project/frontend.yaml
+  
+        cat ./bank-project/frontend.yaml | grep -q "${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}"
+  
+        git add ./bank-project/frontend.yaml
+        git commit -m "Update frontend image to version ${{ github.run_number }}"
+        git push origin main
