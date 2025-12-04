@@ -70,7 +70,7 @@ jobs:
         git commit -m "Update frontend image to version ${{ github.run_number }}"
         # git push origin main
         # git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest main
-        git push https://Pod8-Cohort4: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@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest.git main
+        # git push https://Pod8-Cohort4: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@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest.git main
 
 
         
