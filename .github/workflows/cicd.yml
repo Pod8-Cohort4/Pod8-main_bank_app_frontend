@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-  # pull_request:
-  #   branches:
-  #     - cicd
 
 jobs:
   Continues-Integration_build_and_push:
@@ -32,10 +29,10 @@ jobs:
     - name: Log in to ECR with short-lived credentials
       run: |
         aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin ${{ vars.ECR_REPO }}
-  
+
     - name: Tag Docker image
       run: docker tag bank-app-frontend:latest ${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}
-    
+
     - name: Push image to ECR
       run: docker push ${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}
 
@@ -50,27 +47,24 @@ jobs:
   Continues-Update_k8s_manifest:
     runs-on: ubuntu-latest
     needs: Continues-Integration_build_and_push
+
     steps:
-    - name: Checkout repository.
-      # env:
-      #   GIT_USERNAME: ${{ secrets.GIT_USERNAME }}
-      #   GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
+    - name: Checkout Kubernetes manifest repo
+      uses: actions/checkout@v3
+      with:
+        repository: Pod8-Cohort4/Pod8-kubernetes-manifest
+        ref: main
+        token: ${{ secrets.GIT_PASSWORD }}
+
+    - name: Update frontend image tag
       run: |
-        # git clone https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest
-        git clone https://github.com/Pod8-Cohort4/Pod8-kubernetes-manifest.git
-        cd Pod8-kubernetes-manifest
         git config --global user.email "pod8cohort4@gmail.com"
         git config --global user.name "pod8"
-  
-        sed -i "s+${{ vars.ECR_REPO }}/bank-frontend:.*+${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}+g" ./bank-project/frontend.yaml
-  
-        cat ./bank-project/frontend.yaml | grep -q "${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}"
-  
-        git add ./bank-project/frontend.yaml
+
+        sed -i "s+${{ vars.ECR_REPO }}/bank-frontend:.*+${{ vars.ECR_REPO }}/bank-frontend:${{ github.run_number }}+g" bank-project/frontend.yaml
+
+        git add bank-project/frontend.yaml
         git commit -m "Update frontend image to version ${{ github.run_number }}"
-        # git push origin main
-        # git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest main
-        # git push https://Pod8-Cohort4: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@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest.git main
 
-
-        
+    - name: Push updated manifest
+      run: git push origin main
