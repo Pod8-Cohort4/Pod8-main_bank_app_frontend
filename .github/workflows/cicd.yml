@@ -54,7 +54,9 @@ jobs:
         with:
           repository: Pod8-Cohort4/Pod8-kubernetes-manifest
           ref: main
-          # No token needed for public repo
+          token: ${{ secrets.GIT_PASSWORD }}
+          persist-credentials: false
+          
 
       - name: Configure Git
         run: |
