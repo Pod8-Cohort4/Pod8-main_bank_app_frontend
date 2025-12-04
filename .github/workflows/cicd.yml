@@ -77,3 +77,5 @@ jobs:
           GIT_PASSWORD: ${{ secrets.GIT_PASSWORD }}
         run: |
           git push https://${GIT_USERNAME}:${GIT_PASSWORD}@github.com/Pod8-Cohort4/Pod8-kubernetes-manifest.git main
+
+          
